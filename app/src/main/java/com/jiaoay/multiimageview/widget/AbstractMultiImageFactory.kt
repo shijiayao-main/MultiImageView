@@ -59,7 +59,7 @@ abstract class AbstractMultiImageFactory(
     }
 
     private fun getRowCount(size: Int): Int {
-        return ceil(size / config.maxRowCount.toDouble())
+        return ceil(size / config.maxColumnCount.toDouble())
             .toInt()
             .coerceAtMost(
                 config.maxRowCount

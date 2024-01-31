@@ -20,7 +20,7 @@ class ImageViewHolder(
             factory = SimpleMultiImageFactory(
                 config = MultiImageFactoryConfig(
                     maxColumnCount = 3,
-                    maxRowCount = 3,
+                    maxRowCount = 8,
                     spaceWidth = 3f.dp2px,
                     placeholderColorInt = Color.parseColor("#f3f3f3"),
                     roundRadius = 6f.dp2px,
