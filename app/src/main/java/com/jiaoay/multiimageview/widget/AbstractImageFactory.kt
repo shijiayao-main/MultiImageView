@@ -25,10 +25,27 @@ abstract class AbstractImageFactory<T : ImageFactoryConfig>(
 
     abstract fun processData(imageUrlList: List<String>): List<ImageInfo>
 
+    abstract fun measureAreaSize(
+        width: Int,
+        height: Int,
+        paddingLeft: Int,
+        paddingTop: Int,
+        paddingRight: Int,
+        paddingBottom: Int,
+        imageListSize: Int
+    ): Pair<Float, Float>
+
+    abstract fun measureImageRectF(
+        imageInfoList: List<ImageInfo>,
+        paddingLeft: Int,
+        paddingTop: Int,
+        paddingRight: Int,
+        paddingBottom: Int,
+    )
 
     private var imageLoadJob: Job? = null
 
-    fun loadImageDrawable(
+    open fun loadImageDrawable(
         context: Context,
         imageInfoList: List<ImageInfo>,
     ) {
@@ -79,33 +96,21 @@ abstract class AbstractImageFactory<T : ImageFactoryConfig>(
         }
     }
 
-    abstract fun measureAreaSize(
-        width: Int,
-        height: Int,
-        paddingLeft: Int,
-        paddingTop: Int,
-        paddingRight: Int,
-        paddingBottom: Int,
-        imageListSize: Int
-    ): Pair<Float, Float>
-
-    abstract fun measureImageRectF(
-        imageInfoList: List<ImageInfo>,
-        paddingLeft: Int,
-        paddingTop: Int,
-        paddingRight: Int,
-        paddingBottom: Int,
-    )
-
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     fun drawImage2Canvas(canvas: Canvas, imageInfoList: List<ImageInfo>) {
         imageInfoList.forEach {
-            canvas.drawImageInfo(imageInfo = it)
+            canvas.drawImageInfo(
+                imageInfo = it,
+                imageListSize = imageInfoList.size
+            )
         }
     }
 
-    private fun Canvas.drawImageInfo(imageInfo: ImageInfo) {
+    open fun Canvas.drawImageInfo(
+        imageInfo: ImageInfo,
+        imageListSize: Int
+    ) {
         val imageRectF = imageInfo.imageRectF
         val imageDrawable = imageInfo.drawable ?: let {
             this.save()
@@ -118,26 +123,28 @@ abstract class AbstractImageFactory<T : ImageFactoryConfig>(
         this.clipRoundRectByRectF(rectF = imageRectF)
         this.drawDrawable2Canvas(
             drawable = imageDrawable,
-            areaWidth = imageRectF.width(),
-            areaHeight = imageRectF.height(),
-            areaLeft = imageRectF.left,
-            areaTop = imageRectF.top,
+            imageIndex = imageInfo.index,
+            imageListSize = imageListSize,
+            imageRectF = imageRectF,
             imageWidth = imageDrawable.intrinsicWidth.toFloat(),
             imageHeight = imageDrawable.intrinsicHeight.toFloat()
         )
         this.restore()
     }
 
-    private fun Canvas.drawDrawable2Canvas(
+    open fun Canvas.drawDrawable2Canvas(
         drawable: Drawable?,
-        areaWidth: Float,
-        areaHeight: Float,
-        areaLeft: Float,
-        areaTop: Float,
+        imageIndex: Int,
+        imageListSize: Int,
+        imageRectF: RectF,
         imageWidth: Float,
         imageHeight: Float,
     ) {
         drawable ?: return
+        val areaWidth: Float = imageRectF.width()
+        val areaHeight: Float = imageRectF.height()
+        val areaLeft: Float = imageRectF.left
+        val areaTop: Float = imageRectF.top
 
         val viewRatio: Float = safeGetRatio(width = areaWidth, height = areaHeight)
         val imageRatio: Float = safeGetRatio(width = imageWidth, height = imageHeight)
@@ -172,7 +179,7 @@ abstract class AbstractImageFactory<T : ImageFactoryConfig>(
         drawable.draw(this)
     }
 
-    private fun safeGetRatio(width: Float, height: Float): Float {
+    protected fun safeGetRatio(width: Float, height: Float): Float {
         return if (width > 0 && height > 0) {
             width / height
         } else {
@@ -182,7 +189,7 @@ abstract class AbstractImageFactory<T : ImageFactoryConfig>(
 
     private val clipPath = Path()
 
-    private fun Canvas.clipRoundRectByRectF(rectF: RectF) {
+    protected fun Canvas.clipRoundRectByRectF(rectF: RectF) {
         clipPath.reset()
         clipPath.addRoundRect(
             rectF,
@@ -193,7 +200,7 @@ abstract class AbstractImageFactory<T : ImageFactoryConfig>(
         this.clipPath(clipPath)
     }
 
-    private fun Canvas.drawPlaceholderByRectF(rectF: RectF) {
+    protected fun Canvas.drawPlaceholderByRectF(rectF: RectF) {
         paint.reset()
         paint.color = config.placeholderColorInt
         this.drawRect(rectF, paint)

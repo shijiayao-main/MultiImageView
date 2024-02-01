@@ -3,6 +3,7 @@ package com.jiaoay.multiimageview.widget
 import android.graphics.RectF
 import android.util.Log
 import kotlin.math.ceil
+import kotlin.math.sqrt
 
 abstract class AbstractMultiImageFactory(
     config: MultiImageFactoryConfig
@@ -28,6 +29,8 @@ abstract class AbstractMultiImageFactory(
     }
 
     private var rectWidth: Float = 0f
+    private var columnCount: Int = 0
+    private var rowCount: Int = 0
 
     override fun measureAreaSize(
         width: Int,
@@ -36,19 +39,26 @@ abstract class AbstractMultiImageFactory(
         paddingTop: Int,
         paddingRight: Int,
         paddingBottom: Int,
-        imageListSize: Int
+        imageListSize: Int,
     ): Pair<Float, Float> {
-        val spaceColumnSumWidth: Float = config.spaceWidth * (config.maxColumnCount - 1)
+        val rectWidth = calculateRectWidth(
+            width = width,
+            height = height,
+            paddingLeft = paddingLeft,
+            paddingTop = paddingTop,
+            paddingRight = paddingRight,
+            paddingBottom = paddingBottom,
+            imageListSize = imageListSize,
+        )
+        this.rectWidth = rectWidth
 
         val paddingHorizontalSize = paddingLeft + paddingRight
         val paddingVerticalSize = paddingTop + paddingBottom
 
-        val rectWidth =
-            (width - spaceColumnSumWidth - paddingHorizontalSize) / config.maxColumnCount
-        this.rectWidth = rectWidth
-
-        val rowCount = getRowCount(size = imageListSize)
-        val columnCount = getColumnCount(size = imageListSize)
+        val rowCount = getRowCount(imageListSize = imageListSize)
+        this.rowCount = rowCount
+        val columnCount = getColumnCount(imageListSize = imageListSize)
+        this.columnCount = columnCount
 
         val areaWidth: Float =
             rectWidth * columnCount + (config.spaceWidth * (columnCount - 1)).coerceAtLeast(0f) + paddingHorizontalSize
@@ -58,21 +68,35 @@ abstract class AbstractMultiImageFactory(
         return areaWidth to areaHeight
     }
 
-    private fun getRowCount(size: Int): Int {
-        return ceil(size / config.maxColumnCount.toDouble())
+    open fun getColumnCount(imageListSize: Int): Int {
+        return if (imageListSize >= config.maxColumnCount) {
+            config.maxColumnCount
+        } else {
+            imageListSize % config.maxColumnCount
+        }
+    }
+
+    open fun getRowCount(imageListSize: Int): Int {
+        return ceil(imageListSize / config.maxColumnCount.toDouble())
             .toInt()
             .coerceAtMost(
                 config.maxRowCount
             )
     }
 
-    private fun getColumnCount(size: Int): Int {
+    open fun calculateRectWidth(
+        width: Int,
+        height: Int,
+        paddingLeft: Int,
+        paddingTop: Int,
+        paddingRight: Int,
+        paddingBottom: Int,
+        imageListSize: Int,
+    ): Float {
+        val spaceColumnSumWidth: Float = config.spaceWidth * (config.maxColumnCount - 1)
+        val paddingHorizontalSize = paddingLeft + paddingRight
 
-        return if (size >= config.maxColumnCount) {
-            config.maxColumnCount
-        } else {
-            size % config.maxColumnCount
-        }
+        return (width - spaceColumnSumWidth - paddingHorizontalSize) / config.maxColumnCount
     }
 
     override fun measureImageRectF(
@@ -86,6 +110,7 @@ abstract class AbstractMultiImageFactory(
             Log.e(TAG, "measureImageRectF: rectWidth is <= 0, please measureShowArea before!")
             return
         }
+        val imageListSize = imageInfoList.size
         imageInfoList.forEachIndexed { index, imageInfo ->
             calculateRectF(
                 index = index,
@@ -94,6 +119,7 @@ abstract class AbstractMultiImageFactory(
                 paddingTop = paddingTop,
                 paddingRight = paddingRight,
                 paddingBottom = paddingBottom,
+                imageListSize = imageListSize,
             )
         }
     }
@@ -105,10 +131,18 @@ abstract class AbstractMultiImageFactory(
         paddingTop: Int,
         paddingRight: Int,
         paddingBottom: Int,
+        imageListSize: Int,
     ) {
 
-        val column = index % config.maxColumnCount
-        val row = index / config.maxColumnCount
+        val column = getColumnIndex(
+            index = index,
+            imageListSize = imageListSize
+        )
+        val row = getRowIndex(
+            index = index,
+            imageListSize = imageListSize
+        )
+
         val left: Float = rectWidth * column + config.spaceWidth * column + paddingLeft
         val top: Float = rectWidth * row + config.spaceWidth * row + paddingTop
         val right: Float = left + rectWidth
@@ -120,5 +154,19 @@ abstract class AbstractMultiImageFactory(
             right,
             bottom
         )
+    }
+
+    open fun getColumnIndex(
+        index: Int,
+        imageListSize: Int,
+    ): Int {
+        return index % columnCount
+    }
+
+    open fun getRowIndex(
+        index: Int,
+        imageListSize: Int,
+    ): Int {
+        return index / columnCount
     }
 }

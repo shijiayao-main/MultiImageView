@@ -17,3 +17,14 @@ class MultiImageFactoryConfig(
     placeholderColorInt = placeholderColorInt,
     roundRadius = roundRadius
 )
+
+class SplitMultiImageFactoryConfig(
+    val splitCount: Int,
+    val maxColumnCount: Int,
+    val spaceWidth: Float,
+    placeholderColorInt: Int,
+    roundRadius: Float
+) : ImageFactoryConfig(
+    placeholderColorInt = placeholderColorInt,
+    roundRadius = roundRadius
+)

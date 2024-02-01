@@ -2,9 +2,15 @@ package com.jiaoay.multiimageview.demo
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jiaoay.multiimageview.databinding.ActivityMainBinding
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +30,8 @@ class MainActivity : AppCompatActivity() {
         "https://wallpaperaccess.com/full/756688.jpg"
     )
 
+    private val currentListStateFlow: MutableStateFlow<List<ImageData>?> = MutableStateFlow(null)
+
     private val adapter by lazy {
         MainPageAdapter()
     }
@@ -39,25 +47,84 @@ class MainActivity : AppCompatActivity() {
         )
         binding.recyclerView.adapter = adapter
 
+        binding.sampleType1.setOnClickListener {
+            currentListStateFlow.value = createImageList(
+                showType = ImageDataShowType.Simple
+            )
+        }
+
+        binding.sampleType2.setOnClickListener {
+            currentListStateFlow.value = createImageList(
+                showType = ImageDataShowType.SimpleFillArea
+            )
+        }
+
+        binding.sampleType3.setOnClickListener {
+            currentListStateFlow.value = createImageList(
+                showType = ImageDataShowType.SimpleMinArea
+            )
+        }
+
+        binding.sampleType4.setOnClickListener {
+            currentListStateFlow.value = createImageList(
+                showType = ImageDataShowType.SimpleFillMinArea
+            )
+        }
+
+        binding.sampleType5.setOnClickListener {
+            currentListStateFlow.value = createImageList(
+                showType = ImageDataShowType.Split
+            )
+        }
+
+        initCollector()
+    }
+
+    private fun initCollector() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
+                currentListStateFlow.collectLatest {
+                    if (it == null) {
+                        return@collectLatest
+                    }
+                    adapter.itemReset(it)
+                }
+            }
+        }
+    }
+
+    private fun createImageList(
+        showType: ImageDataShowType
+    ): List<ImageData> {
         val list: MutableList<ImageData> = ArrayList()
-        repeat(9) {
-            val data = createData(imageCount = it + 1)
+        repeat(16) {
+            val data = createData(
+                imageCount = it + 1,
+                showType = showType
+            )
             list.add(data)
         }
         list.add(
-            createData(imageCount = 20)
+            createData(
+                imageCount = 20,
+                showType = showType
+            )
         )
-        adapter.itemReset(list)
+        return list
     }
 
-    private fun createData(imageCount: Int): ImageData {
+    private fun createData(
+        imageCount: Int,
+        showType: ImageDataShowType
+    ): ImageData {
         val imageList: MutableList<String> = ArrayList()
         repeat(imageCount) {
             imageList.add(defaultList[it % defaultList.size])
         }
 
         return ImageData(
-            imageUrlList = imageList
+            imageUrlList = imageList,
+            showType = showType
         )
     }
 }

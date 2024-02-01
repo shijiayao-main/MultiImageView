@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import kotlin.math.sqrt
 
 val mainScope = CoroutineScope(Dispatchers.Main)
 
@@ -106,4 +107,38 @@ private fun <T> CancellableContinuation<T>.safeResume(value: T) {
         return
     }
     continuation.resume(value)
+}
+
+
+private var sqrtCache: Pair<Int, Int> = Pair(1, 1)
+
+fun Int.cacheSqrt(): Int {
+    if (this == sqrtCache.first) {
+        return sqrtCache.second
+    }
+
+    val sqrtNum = this.sqrt()
+    sqrtCache = this to sqrtNum
+    return sqrtNum
+}
+
+private var perfectSquareCache = 1
+
+fun Int.sqrt(): Int {
+    return sqrt(toDouble()).toInt()
+}
+
+fun Int.isPerfectSquare(): Boolean {
+    if (this == perfectSquareCache) {
+        return true
+    }
+    val num = this
+    val squareRoot = sqrt(num.toDouble())
+    val roundedSquareRoot = squareRoot.toInt()
+
+    val isPerfectSquare = roundedSquareRoot * roundedSquareRoot == num
+    if (isPerfectSquare) {
+        perfectSquareCache = num
+    }
+    return isPerfectSquare
 }
