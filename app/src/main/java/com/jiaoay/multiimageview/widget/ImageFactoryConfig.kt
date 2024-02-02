@@ -18,7 +18,7 @@ class MultiImageFactoryConfig(
     roundRadius = roundRadius
 )
 
-class SplitMultiImageFactoryConfig(
+class SplitImageFactoryConfig(
     val splitCount: Int,
     val maxColumnCount: Int,
     val spaceWidth: Float,

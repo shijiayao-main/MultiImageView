@@ -1,11 +1,14 @@
-package com.jiaoay.multiimageview.widget
+package com.jiaoay.multiimageview.widget.factory.multi
 
+import android.graphics.Rect
 import android.graphics.RectF
 import android.util.Log
+import com.jiaoay.multiimageview.widget.AbstractImageFactory
+import com.jiaoay.multiimageview.widget.ImageInfo
+import com.jiaoay.multiimageview.widget.MultiImageFactoryConfig
 import kotlin.math.ceil
-import kotlin.math.sqrt
 
-abstract class AbstractMultiImageFactory(
+open class MultiImageFactory(
     config: MultiImageFactoryConfig
 ) : AbstractImageFactory<MultiImageFactoryConfig>(
     config = config
@@ -20,8 +23,9 @@ abstract class AbstractMultiImageFactory(
             val imageInfo = ImageInfo(
                 index = index,
                 url = url,
-                imageRectF = RectF(),
-                drawable = null
+                drawable = null,
+                imageAreaRectF = RectF(),
+                drawableBoundsRectF = Rect()
             )
             imageInfoList.add(imageInfo)
         }
@@ -35,22 +39,18 @@ abstract class AbstractMultiImageFactory(
     override fun measureAreaSize(
         width: Int,
         height: Int,
-        paddingLeft: Int,
-        paddingTop: Int,
-        paddingRight: Int,
-        paddingBottom: Int,
         imageListSize: Int,
     ): Pair<Float, Float> {
         val rectWidth = calculateRectWidth(
             width = width,
             height = height,
-            paddingLeft = paddingLeft,
-            paddingTop = paddingTop,
-            paddingRight = paddingRight,
-            paddingBottom = paddingBottom,
             imageListSize = imageListSize,
         )
         this.rectWidth = rectWidth
+        val paddingLeft = getPaddingRect().left
+        val paddingTop = getPaddingRect().top
+        val paddingRight = getPaddingRect().right
+        val paddingBottom = getPaddingRect().bottom
 
         val paddingHorizontalSize = paddingLeft + paddingRight
         val paddingVerticalSize = paddingTop + paddingBottom
@@ -87,12 +87,11 @@ abstract class AbstractMultiImageFactory(
     open fun calculateRectWidth(
         width: Int,
         height: Int,
-        paddingLeft: Int,
-        paddingTop: Int,
-        paddingRight: Int,
-        paddingBottom: Int,
         imageListSize: Int,
     ): Float {
+        val paddingLeft = getPaddingRect().left
+        val paddingRight = getPaddingRect().right
+
         val spaceColumnSumWidth: Float = config.spaceWidth * (config.maxColumnCount - 1)
         val paddingHorizontalSize = paddingLeft + paddingRight
 
@@ -101,10 +100,6 @@ abstract class AbstractMultiImageFactory(
 
     override fun measureImageRectF(
         imageInfoList: List<ImageInfo>,
-        paddingLeft: Int,
-        paddingTop: Int,
-        paddingRight: Int,
-        paddingBottom: Int,
     ) {
         if (rectWidth <= 0f) {
             Log.e(TAG, "measureImageRectF: rectWidth is <= 0, please measureShowArea before!")
@@ -115,10 +110,6 @@ abstract class AbstractMultiImageFactory(
             calculateRectF(
                 index = index,
                 imageInfo = imageInfo,
-                paddingLeft = paddingLeft,
-                paddingTop = paddingTop,
-                paddingRight = paddingRight,
-                paddingBottom = paddingBottom,
                 imageListSize = imageListSize,
             )
         }
@@ -127,12 +118,10 @@ abstract class AbstractMultiImageFactory(
     private fun calculateRectF(
         index: Int,
         imageInfo: ImageInfo,
-        paddingLeft: Int,
-        paddingTop: Int,
-        paddingRight: Int,
-        paddingBottom: Int,
         imageListSize: Int,
     ) {
+        val paddingLeft = getPaddingRect().left
+        val paddingTop = getPaddingRect().top
 
         val column = getColumnIndex(
             index = index,
@@ -148,7 +137,7 @@ abstract class AbstractMultiImageFactory(
         val right: Float = left + rectWidth
         val bottom: Float = top + rectWidth
 
-        imageInfo.imageRectF.set(
+        imageInfo.imageAreaRectF.set(
             left,
             top,
             right,

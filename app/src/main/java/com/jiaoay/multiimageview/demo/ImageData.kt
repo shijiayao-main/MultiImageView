@@ -10,6 +10,9 @@ enum class ImageDataShowType {
     SimpleFillArea,
     SimpleMinArea,
     SimpleFillMinArea,
-    Split
+    Split,
+    SplitFillArea,
+    SplitMinArea,
+    SplitFillMinArea,
 }
 

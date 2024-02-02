@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -23,24 +24,20 @@ abstract class AbstractImageFactory<T : ImageFactoryConfig>(
 
     var controller: MultiImageViewController? = null
 
+    protected fun getPaddingRect(): Rect {
+        return controller?.getPaddingRect() ?: Rect()
+    }
+
     abstract fun processData(imageUrlList: List<String>): List<ImageInfo>
 
     abstract fun measureAreaSize(
         width: Int,
         height: Int,
-        paddingLeft: Int,
-        paddingTop: Int,
-        paddingRight: Int,
-        paddingBottom: Int,
         imageListSize: Int
     ): Pair<Float, Float>
 
     abstract fun measureImageRectF(
         imageInfoList: List<ImageInfo>,
-        paddingLeft: Int,
-        paddingTop: Int,
-        paddingRight: Int,
-        paddingBottom: Int,
     )
 
     private var imageLoadJob: Job? = null
@@ -52,7 +49,48 @@ abstract class AbstractImageFactory<T : ImageFactoryConfig>(
         loadImageDrawable(
             context = context,
             imageInfoList = imageInfoList,
-            endProcess = { },
+            endProcess = endProcess@{ imageInfo ->
+                val drawable = imageInfo.drawable ?: return@endProcess
+
+                val imageRectF = imageInfo.imageAreaRectF
+                val imageWidth = drawable.intrinsicWidth.toFloat()
+                val imageHeight = drawable.intrinsicHeight.toFloat()
+
+                val areaWidth: Float = imageRectF.width()
+                val areaHeight: Float = imageRectF.height()
+                val areaLeft: Float = imageRectF.left
+                val areaTop: Float = imageRectF.top
+
+                val viewRatio: Float = safeGetRatio(width = areaWidth, height = areaHeight)
+                val imageRatio: Float = safeGetRatio(width = imageWidth, height = imageHeight)
+
+                val imageAdaptWidth: Float
+                val imageAdaptHeight: Float
+
+                if (imageRatio >= viewRatio) {
+                    imageAdaptHeight = areaHeight
+                    imageAdaptWidth = imageAdaptHeight * imageRatio
+                } else {
+                    imageAdaptWidth = areaWidth
+                    imageAdaptHeight = if (imageRatio > 0) {
+                        imageAdaptWidth / imageRatio
+                    } else {
+                        imageHeight
+                    }
+                }
+
+                val imageLeft: Float = areaLeft + (areaWidth - imageAdaptWidth) / 2f
+                val imageTop: Float = areaTop + (areaHeight - imageAdaptHeight) / 2f
+                val imageRight: Float = imageLeft + imageAdaptWidth
+                val imageBottom: Float = imageTop + imageAdaptHeight
+
+                imageInfo.drawableBoundsRectF.set(
+                    imageLeft.toInt(),
+                    imageTop.toInt(),
+                    imageRight.toInt(),
+                    imageBottom.toInt()
+                )
+            },
         )
     }
 
@@ -77,8 +115,8 @@ abstract class AbstractImageFactory<T : ImageFactoryConfig>(
                 val url = imageInfo.url
                 val drawable = context.loadImageUri(
                     uri = Uri.parse(url),
-                    width = imageInfo.imageRectF.width().toInt(),
-                    height = imageInfo.imageRectF.height().toInt(),
+                    width = imageInfo.imageAreaRectF.width().toInt(),
+                    height = imageInfo.imageAreaRectF.height().toInt(),
                 )
                 imageInfo.drawable = drawable
                 endProcess.invoke(imageInfo)
@@ -111,7 +149,7 @@ abstract class AbstractImageFactory<T : ImageFactoryConfig>(
         imageInfo: ImageInfo,
         imageListSize: Int
     ) {
-        val imageRectF = imageInfo.imageRectF
+        val imageRectF = imageInfo.imageAreaRectF
         val imageDrawable = imageInfo.drawable ?: let {
             this.save()
             this.clipRoundRectByRectF(rectF = imageRectF)
@@ -123,59 +161,17 @@ abstract class AbstractImageFactory<T : ImageFactoryConfig>(
         this.clipRoundRectByRectF(rectF = imageRectF)
         this.drawDrawable2Canvas(
             drawable = imageDrawable,
-            imageIndex = imageInfo.index,
-            imageListSize = imageListSize,
-            imageRectF = imageRectF,
-            imageWidth = imageDrawable.intrinsicWidth.toFloat(),
-            imageHeight = imageDrawable.intrinsicHeight.toFloat()
+            drawableBoundsRect = imageInfo.drawableBoundsRectF
         )
         this.restore()
     }
 
     open fun Canvas.drawDrawable2Canvas(
         drawable: Drawable?,
-        imageIndex: Int,
-        imageListSize: Int,
-        imageRectF: RectF,
-        imageWidth: Float,
-        imageHeight: Float,
+        drawableBoundsRect: Rect,
     ) {
         drawable ?: return
-        val areaWidth: Float = imageRectF.width()
-        val areaHeight: Float = imageRectF.height()
-        val areaLeft: Float = imageRectF.left
-        val areaTop: Float = imageRectF.top
-
-        val viewRatio: Float = safeGetRatio(width = areaWidth, height = areaHeight)
-        val imageRatio: Float = safeGetRatio(width = imageWidth, height = imageHeight)
-
-        val imageAdaptWidth: Float
-        val imageAdaptHeight: Float
-
-        if (imageRatio >= viewRatio) {
-            imageAdaptHeight = areaHeight
-            imageAdaptWidth = imageAdaptHeight * imageRatio
-        } else {
-            imageAdaptWidth = areaWidth
-            imageAdaptHeight = if (imageRatio > 0) {
-                imageAdaptWidth / imageRatio
-            } else {
-                imageHeight
-            }
-        }
-
-        val imageLeft: Float = areaLeft + (areaWidth - imageAdaptWidth) / 2f
-        val imageTop: Float = areaTop + (areaHeight - imageAdaptHeight) / 2f
-        val imageRight: Float = imageLeft + imageAdaptWidth
-        val imageBottom: Float = imageTop + imageAdaptHeight
-
-        drawable.setBounds(
-            imageLeft.toInt(),
-            imageTop.toInt(),
-            imageRight.toInt(),
-            imageBottom.toInt()
-        )
-
+        drawable.bounds = drawableBoundsRect
         drawable.draw(this)
     }
 

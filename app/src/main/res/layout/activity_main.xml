@@ -49,6 +49,27 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="4dp"
         android:text="样式5" />
+
+      <Button
+        android:id="@+id/sampleType6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="4dp"
+        android:text="样式6" />
+
+      <Button
+        android:id="@+id/sampleType7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="4dp"
+        android:text="样式7" />
+
+      <Button
+        android:id="@+id/sampleType8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="4dp"
+        android:text="样式8" />
     </LinearLayout>
 
   </HorizontalScrollView>

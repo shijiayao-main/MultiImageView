@@ -1,18 +1,17 @@
-package com.jiaoay.multiimageview.widget.factory
+package com.jiaoay.multiimageview.widget.factory.multi
 
 import com.jiaoay.multiimageview.cacheSqrt
 import com.jiaoay.multiimageview.isPerfectSquare
 import com.jiaoay.multiimageview.sqrt
-import com.jiaoay.multiimageview.widget.AbstractMultiImageFactory
 import com.jiaoay.multiimageview.widget.MultiImageFactoryConfig
 import kotlin.math.ceil
 
 /**
  * 会尽可能的使用较小的空间去展示图片
  */
-open class MinAreaMultiImageFactory(
+open class MultiMinAreaImageFactory(
     config: MultiImageFactoryConfig
-) : AbstractMultiImageFactory(
+) : MultiImageFactory(
     config = config
 ) {
     override fun getColumnCount(imageListSize: Int): Int {

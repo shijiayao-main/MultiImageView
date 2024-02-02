@@ -6,12 +6,15 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.jiaoay.multiimageview.databinding.ViewHolderImageBinding
 import com.jiaoay.multiimageview.dp2px
 import com.jiaoay.multiimageview.widget.MultiImageFactoryConfig
-import com.jiaoay.multiimageview.widget.SplitMultiImageFactoryConfig
-import com.jiaoay.multiimageview.widget.factory.FillAreaMultiImageFactory
-import com.jiaoay.multiimageview.widget.factory.FillMinAreaMultiImageFactory
-import com.jiaoay.multiimageview.widget.factory.MinAreaMultiImageFactory
-import com.jiaoay.multiimageview.widget.factory.SimpleMultiImageFactory
-import com.jiaoay.multiimageview.widget.factory.SplitMultiImageFactory
+import com.jiaoay.multiimageview.widget.SplitImageFactoryConfig
+import com.jiaoay.multiimageview.widget.factory.multi.MultiFillAreaImageFactory
+import com.jiaoay.multiimageview.widget.factory.multi.MultiFillMinAreaImageFactory
+import com.jiaoay.multiimageview.widget.factory.multi.MultiImageFactory
+import com.jiaoay.multiimageview.widget.factory.multi.MultiMinAreaImageFactory
+import com.jiaoay.multiimageview.widget.factory.split.SplitFillAreaImageFactory
+import com.jiaoay.multiimageview.widget.factory.split.SplitFillMinAreaImageFactory
+import com.jiaoay.multiimageview.widget.factory.split.SplitImageFactory
+import com.jiaoay.multiimageview.widget.factory.split.SplitMinAreaImageFactory
 
 class ImageViewHolder(
     val binding: ViewHolderImageBinding
@@ -28,8 +31,8 @@ class ImageViewHolder(
             roundRadius = 6f.dp2px,
         )
 
-        val splitConfig = SplitMultiImageFactoryConfig(
-            maxColumnCount = 3,
+        val splitConfig = SplitImageFactoryConfig(
+            maxColumnCount = 4,
             splitCount = size,
             spaceWidth = 3f.dp2px,
             placeholderColorInt = Color.parseColor("#f3f3f3"),
@@ -38,31 +41,49 @@ class ImageViewHolder(
 
         val factory = when (data.showType) {
             ImageDataShowType.Simple -> {
-                SimpleMultiImageFactory(
+                MultiImageFactory(
                     config = multiConfig
                 )
             }
 
             ImageDataShowType.SimpleFillArea -> {
-                FillAreaMultiImageFactory(
+                MultiFillAreaImageFactory(
                     config = multiConfig
                 )
             }
 
             ImageDataShowType.SimpleMinArea -> {
-                MinAreaMultiImageFactory(
+                MultiMinAreaImageFactory(
                     config = multiConfig
                 )
             }
 
             ImageDataShowType.SimpleFillMinArea -> {
-                FillMinAreaMultiImageFactory(
+                MultiFillMinAreaImageFactory(
                     config = multiConfig
                 )
             }
 
             ImageDataShowType.Split -> {
-                SplitMultiImageFactory(
+                SplitImageFactory(
+                    config = splitConfig
+                )
+            }
+
+            ImageDataShowType.SplitFillArea -> {
+                SplitFillAreaImageFactory(
+                    config = splitConfig
+                )
+            }
+
+            ImageDataShowType.SplitMinArea -> {
+                SplitMinAreaImageFactory(
+                    config = splitConfig
+                )
+            }
+
+            ImageDataShowType.SplitFillMinArea -> {
+                SplitFillMinAreaImageFactory(
                     config = splitConfig
                 )
             }

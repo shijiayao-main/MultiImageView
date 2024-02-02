@@ -2,6 +2,7 @@ package com.jiaoay.multiimageview.widget
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 
@@ -14,6 +15,17 @@ class MultiImageView @JvmOverloads constructor(
     private val controller = object : MultiImageViewController {
         override fun notifyInvalidate() {
             this@MultiImageView.invalidate()
+        }
+
+        private val paddingRect = Rect()
+        override fun getPaddingRect(): Rect {
+            paddingRect.set(
+                paddingLeft,
+                paddingTop,
+                paddingRight,
+                paddingBottom
+            )
+            return paddingRect
         }
     }
 
@@ -55,10 +67,6 @@ class MultiImageView @JvmOverloads constructor(
         val areaSizePair = factory?.measureAreaSize(
             width = width,
             height = height,
-            paddingLeft = paddingLeft,
-            paddingTop = paddingTop,
-            paddingRight = paddingRight,
-            paddingBottom = paddingBottom,
             imageListSize = imageInfoList.size
         )
 
@@ -67,10 +75,6 @@ class MultiImageView @JvmOverloads constructor(
 
         factory?.measureImageRectF(
             imageInfoList = imageInfoList,
-            paddingLeft = paddingLeft,
-            paddingTop = paddingTop,
-            paddingRight = paddingRight,
-            paddingBottom = paddingBottom,
         )
 
         setMeasuredDimension(
