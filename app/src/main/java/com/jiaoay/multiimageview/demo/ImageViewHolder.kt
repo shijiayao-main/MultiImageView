@@ -7,14 +7,14 @@ import com.jiaoay.multiimageview.databinding.ViewHolderImageBinding
 import com.jiaoay.multiimageview.dp2px
 import com.jiaoay.multiimageview.widget.MultiImageFactoryConfig
 import com.jiaoay.multiimageview.widget.SplitImageFactoryConfig
-import com.jiaoay.multiimageview.widget.factory.multi.MultiFillAreaImageFactory
-import com.jiaoay.multiimageview.widget.factory.multi.MultiFillMinAreaImageFactory
-import com.jiaoay.multiimageview.widget.factory.multi.MultiImageFactory
-import com.jiaoay.multiimageview.widget.factory.multi.MultiMinAreaImageFactory
-import com.jiaoay.multiimageview.widget.factory.split.SplitFillAreaImageFactory
-import com.jiaoay.multiimageview.widget.factory.split.SplitFillMinAreaImageFactory
-import com.jiaoay.multiimageview.widget.factory.split.SplitImageFactory
-import com.jiaoay.multiimageview.widget.factory.split.SplitMinAreaImageFactory
+import com.jiaoay.multiimageview.widget.factory.image.multi.MultiFillAreaImageFactory
+import com.jiaoay.multiimageview.widget.factory.image.multi.MultiFillMinAreaImageFactory
+import com.jiaoay.multiimageview.widget.factory.image.multi.MultiMinAreaImageFactory
+import com.jiaoay.multiimageview.widget.factory.image.multi.MultiSampleImageFactory
+import com.jiaoay.multiimageview.widget.factory.image.split.SplitFillAreaImageFactory
+import com.jiaoay.multiimageview.widget.factory.image.split.SplitFillMinAreaImageFactory
+import com.jiaoay.multiimageview.widget.factory.image.split.SplitMinAreaImageFactory
+import com.jiaoay.multiimageview.widget.factory.image.split.SplitSampleImageFactory
 
 class ImageViewHolder(
     val binding: ViewHolderImageBinding
@@ -41,7 +41,7 @@ class ImageViewHolder(
 
         val factory = when (data.showType) {
             ImageDataShowType.Simple -> {
-                MultiImageFactory(
+                MultiSampleImageFactory(
                     config = multiConfig
                 )
             }
@@ -65,7 +65,7 @@ class ImageViewHolder(
             }
 
             ImageDataShowType.Split -> {
-                SplitImageFactory(
+                SplitSampleImageFactory(
                     config = splitConfig
                 )
             }

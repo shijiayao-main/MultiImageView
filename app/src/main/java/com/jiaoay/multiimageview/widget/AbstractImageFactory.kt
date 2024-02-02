@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import com.jiaoay.multiimageview.loadImageUri
 import com.jiaoay.multiimageview.scope
+import com.jiaoay.multiimageview.widget.factory.provider.SizeProvider
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -17,7 +18,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 abstract class AbstractImageFactory<T : ImageFactoryConfig>(
-    val config: T
+    val config: T,
+    protected val sizeProvider: SizeProvider<T>
 ) {
 
     protected val TAG = "AbstractImageFactory"

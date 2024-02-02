@@ -1,17 +1,14 @@
-package com.jiaoay.multiimageview.widget.factory.split
+package com.jiaoay.multiimageview.widget.factory.provider
 
 import com.jiaoay.multiimageview.cacheSqrt
 import com.jiaoay.multiimageview.isPerfectSquare
 import com.jiaoay.multiimageview.sqrt
-import com.jiaoay.multiimageview.widget.SplitImageFactoryConfig
+import com.jiaoay.multiimageview.widget.ImageFactoryConfig
 import kotlin.math.ceil
 
-/**
- * 会尽可能的使用较小的空间去展示图片
- */
-open class SplitMinAreaImageFactory(
-    config: SplitImageFactoryConfig
-) : SplitImageFactory(
+open class MinAreaSizeProvider<T : ImageFactoryConfig>(
+    config: T
+) : SizeProvider<T>(
     config = config
 ) {
     override fun getColumnCount(imageListSize: Int): Int {

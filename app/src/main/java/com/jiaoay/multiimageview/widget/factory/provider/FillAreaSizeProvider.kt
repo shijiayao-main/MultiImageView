@@ -1,19 +1,22 @@
-package com.jiaoay.multiimageview.widget.factory.split
+package com.jiaoay.multiimageview.widget.factory.provider
 
-import com.jiaoay.multiimageview.widget.SplitImageFactoryConfig
+import android.graphics.Rect
+import com.jiaoay.multiimageview.widget.ImageFactoryConfig
 
-class SplitFillMinAreaImageFactory(
-    config: SplitImageFactoryConfig
-) : SplitMinAreaImageFactory(
+class FillAreaSizeProvider<T : ImageFactoryConfig>(
+    config: T
+) : SizeProvider<T>(
     config = config
 ) {
+
     override fun calculateRectWidth(
         width: Int,
         height: Int,
         imageListSize: Int,
+        paddingRect: Rect,
     ): Float {
-        val paddingLeft = getPaddingRect().left
-        val paddingRight = getPaddingRect().right
+        val paddingLeft = paddingRect.left
+        val paddingRight = paddingRect.right
 
         val columnCount = getColumnCount(imageListSize = imageListSize)
         val spaceColumnSumWidth: Float = config.spaceWidth * (columnCount - 1)

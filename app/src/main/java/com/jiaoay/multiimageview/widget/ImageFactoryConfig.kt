@@ -4,27 +4,33 @@ import androidx.annotation.ColorInt
 
 sealed class ImageFactoryConfig(
     @ColorInt val placeholderColorInt: Int,
-    val roundRadius: Float
+    val roundRadius: Float,
+    val spaceWidth: Float,
+    val maxColumnCount: Int,
 )
 
 class MultiImageFactoryConfig(
-    val maxColumnCount: Int,
     val maxRowCount: Int,
-    val spaceWidth: Float,
+    maxColumnCount: Int,
+    spaceWidth: Float,
     placeholderColorInt: Int,
     roundRadius: Float
 ) : ImageFactoryConfig(
     placeholderColorInt = placeholderColorInt,
-    roundRadius = roundRadius
+    roundRadius = roundRadius,
+    spaceWidth = spaceWidth,
+    maxColumnCount = maxColumnCount
 )
 
 class SplitImageFactoryConfig(
     val splitCount: Int,
-    val maxColumnCount: Int,
-    val spaceWidth: Float,
+    maxColumnCount: Int,
+    spaceWidth: Float,
     placeholderColorInt: Int,
     roundRadius: Float
 ) : ImageFactoryConfig(
     placeholderColorInt = placeholderColorInt,
-    roundRadius = roundRadius
+    roundRadius = roundRadius,
+    spaceWidth = spaceWidth,
+    maxColumnCount = maxColumnCount
 )

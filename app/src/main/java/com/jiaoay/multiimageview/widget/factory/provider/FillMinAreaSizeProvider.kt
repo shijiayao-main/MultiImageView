@@ -1,19 +1,34 @@
-package com.jiaoay.multiimageview.widget.factory.multi
+package com.jiaoay.multiimageview.widget.factory.provider
 
+import android.graphics.Rect
 import com.jiaoay.multiimageview.cacheSqrt
 import com.jiaoay.multiimageview.isPerfectSquare
 import com.jiaoay.multiimageview.sqrt
-import com.jiaoay.multiimageview.widget.MultiImageFactoryConfig
+import com.jiaoay.multiimageview.widget.ImageFactoryConfig
 import kotlin.math.ceil
 
-/**
- * 会尽可能的使用较小的空间去展示图片
- */
-open class MultiMinAreaImageFactory(
-    config: MultiImageFactoryConfig
-) : MultiImageFactory(
+class FillMinAreaSizeProvider<T : ImageFactoryConfig>(
+    config: T
+) : SizeProvider<T>(
     config = config
 ) {
+
+    override fun calculateRectWidth(
+        width: Int,
+        height: Int,
+        imageListSize: Int,
+        paddingRect: Rect
+    ): Float {
+        val paddingLeft = paddingRect.left
+        val paddingRight = paddingRect.right
+
+        val columnCount = getColumnCount(imageListSize = imageListSize)
+        val spaceColumnSumWidth: Float = config.spaceWidth * (columnCount - 1)
+        val paddingHorizontalSize = paddingLeft + paddingRight
+
+        return (width - spaceColumnSumWidth - paddingHorizontalSize) / columnCount
+    }
+
     override fun getColumnCount(imageListSize: Int): Int {
         if (imageListSize.isPerfectSquare().not()) {
             val sqrtSize = imageListSize.sqrt()
