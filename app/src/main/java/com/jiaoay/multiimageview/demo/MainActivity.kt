@@ -1,19 +1,27 @@
 package com.jiaoay.multiimageview.demo
 
+import android.graphics.Color
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.jiaoay.multiimageview.databinding.ActivityMainBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.jiaoay.multiimageview.dp2px
+import com.jiaoay.multiimageview.widget.data.ImageFactoryConfig
+import com.jiaoay.multiimageview.widget.data.ImageSizeConfig
+import com.jiaoay.multiimageview.widget.data.MultiImageSizeConfig
+import com.jiaoay.multiimageview.widget.data.SplitImageSizeConfig
+import com.jiaoay.multiimageview.widget.factory.MultiImageFactory
+import com.jiaoay.multiimageview.widget.factory.SplitImageFactory
+import com.jiaoay.multiimageview.widget.factory.provider.FillAreaSizeProvider
+import com.jiaoay.multiimageview.widget.factory.provider.FillMinAreaSizeProvider
+import com.jiaoay.multiimageview.widget.factory.provider.MinAreaSizeProvider
+import com.jiaoay.multiimageview.widget.factory.provider.SizeProvider
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,20 +29,15 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private val defaultList = listOf(
-        "https://variety.com/wp-content/uploads/2018/11/star-citizen.jpg?resize=681",
-        "https://ts1.cn.mm.bing.net/th/id/R-C.815839bff5fd65d0451a8db1d052ce13?rik=WIy2O9aWDkvtQw&riu=http%3a%2f%2fww1.sinaimg.cn%2flarge%2f844f612dgw1eoik7jwe4lj21kw29xdmq.jpg&ehk=bEB6BcOrRyIutMgqIIGB%2f5gkag9y0J777r80wJ%2bTAKM%3d&risl=&pid=ImgRaw&r=0",
-        "https://www.pcgamesn.com/wp-content/uploads/2018/01/star-citizen.jpg",
-        "https://i0.wp.com/twinfinite.net/wp-content/uploads/2020/09/Star-Citizen-6-scaled.jpg?resize=2048%2C1229&ssl=1",
-        "https://hdqwalls.com/wallpapers/star-citizen-2019-4k-ze.jpg",
-        "https://tse4-mm.cn.bing.net/th/id/OIP-C.wbwTJUZR3M4k0qS-50kBpgHaEJ?rs=1&pid=ImgDetMain",
-        "https://starcitizen.tools/images/thumb/c/cc/C2_Feature_Style_clouds.jpg/1200px-C2_Feature_Style_clouds.jpg",
-        "https://tse1-mm.cn.bing.net/th/id/OIP-C.M-VOoGyrApVOtfbygUxoCQHaDk?rs=1&pid=ImgDetMain",
-        "https://www.wallpapertip.com/wmimgs/100-1002102_star-citizen-wallpaper-planet.jpg",
-        "https://wallpaperaccess.com/full/756688.jpg"
-    )
+    private val viewModel: MainViewModel by viewModels()
 
-    private val currentListStateFlow: MutableStateFlow<List<ImageData>?> = MutableStateFlow(null)
+    private val roundRadius = 6f.dp2px
+    private val spaceWidth = 6f.dp2px
+
+    private val imageConfig = ImageFactoryConfig(
+        placeholderColorInt = Color.parseColor("#eebbcb"),
+        roundRadius = roundRadius
+    )
 
     private val adapter by lazy {
         MainPageAdapter()
@@ -44,59 +47,58 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(
-            this,
-            RecyclerView.VERTICAL,
-            false
-        )
-        binding.recyclerView.adapter = adapter
-
-        binding.sampleType1.setOnClickListener {
-            currentListStateFlow.value = createImageList(
-                showType = ImageDataShowType.Simple
-            )
+        binding.multiType.setOnClickListener {
+            viewModel.changeTypeStateType(type = MainViewModel.Type.Multi)
+        }
+        binding.splitType.setOnClickListener {
+            viewModel.changeTypeStateType(type = MainViewModel.Type.Split)
         }
 
-        binding.sampleType2.setOnClickListener {
-            currentListStateFlow.value = createImageList(
-                showType = ImageDataShowType.SimpleFillArea
-            )
+        //
+        binding.addColumn.setOnClickListener {
+            viewModel.addColumn()
+        }
+        binding.reduceColumn.setOnClickListener {
+            viewModel.reduceColumn()
+        }
+        binding.addRow.setOnClickListener {
+            viewModel.addRow()
+        }
+        binding.reduceRow.setOnClickListener {
+            viewModel.reduceRow()
         }
 
-        binding.sampleType3.setOnClickListener {
-            currentListStateFlow.value = createImageList(
-                showType = ImageDataShowType.SimpleMinArea
-            )
+        //
+        binding.addImage.setOnClickListener {
+            viewModel.addImage()
+        }
+        binding.reduceImage.setOnClickListener {
+            viewModel.reduceImage()
+        }
+        binding.addSplit.setOnClickListener {
+            viewModel.addSplitNum()
+        }
+        binding.reduceSplit.setOnClickListener {
+            viewModel.reduceSplitNum()
+        }
+        binding.changeSplitImage.setOnClickListener {
+            viewModel.changeSplitImage()
         }
 
-        binding.sampleType4.setOnClickListener {
-            currentListStateFlow.value = createImageList(
-                showType = ImageDataShowType.SimpleFillMinArea
-            )
+        binding.sample.setOnClickListener {
+            viewModel.changeShowType(showType = MainViewModel.ImageShowType.Simple)
         }
 
-        binding.sampleType5.setOnClickListener {
-            currentListStateFlow.value = createImageList(
-                showType = ImageDataShowType.Split
-            )
+        binding.fillArea.setOnClickListener {
+            viewModel.changeShowType(showType = MainViewModel.ImageShowType.FillArea)
         }
 
-        binding.sampleType6.setOnClickListener {
-            currentListStateFlow.value = createImageList(
-                showType = ImageDataShowType.SplitFillArea
-            )
+        binding.fillMinArea.setOnClickListener {
+            viewModel.changeShowType(showType = MainViewModel.ImageShowType.FillMinArea)
         }
 
-        binding.sampleType7.setOnClickListener {
-            currentListStateFlow.value = createImageList(
-                showType = ImageDataShowType.SplitMinArea
-            )
-        }
-
-        binding.sampleType8.setOnClickListener {
-            currentListStateFlow.value = createImageList(
-                showType = ImageDataShowType.SplitFillMinArea
-            )
+        binding.minArea.setOnClickListener {
+            viewModel.changeShowType(showType = MainViewModel.ImageShowType.MinArea)
         }
 
         initCollector()
@@ -105,48 +107,121 @@ class MainActivity : AppCompatActivity() {
     private fun initCollector() {
         lifecycleScope.launch {
             repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
-                currentListStateFlow.collectLatest {
-                    if (it == null) {
-                        return@collectLatest
+                launch {
+                    viewModel.dataFlow.collectLatest {
+                        val list = it.second
+                        val first = it.first
+                        val type = first.first
+                        val factory = when (val config: ImageSizeConfig = first.second) {
+                            is MultiImageSizeConfig -> {
+                                val sizeProvider = getProvider(
+                                    type = type,
+                                    sizeConfig = config
+                                )
+                                MultiImageFactory(
+                                    config = imageConfig,
+                                    sizeProvider = sizeProvider
+                                )
+                            }
+
+                            is SplitImageSizeConfig -> {
+                                val sizeProvider = getProvider(
+                                    type = type,
+                                    sizeConfig = config
+                                )
+                                SplitImageFactory(
+                                    config = imageConfig,
+                                    sizeProvider = sizeProvider
+                                )
+                            }
+                        }
+
+                        binding.multiImageView.setData(
+                            imageUrlList = list,
+                            factory = factory
+                        )
                     }
-                    adapter.itemReset(it)
+                }
+
+                launch {
+                    viewModel.typeStateFlow.collectLatest {
+                        when(it) {
+                            MainViewModel.Type.Multi -> {
+                                binding.splitType.isSelected = false
+                                binding.multiType.isSelected = true
+                                binding.rowControlLayout.isVisible = true
+
+                                binding.imageControlLayout.isVisible = true
+                                binding.changeSplitImage.isVisible = false
+                                binding.splitControlLayout.isVisible = false
+                            }
+                            MainViewModel.Type.Split -> {
+                                binding.splitType.isSelected = true
+                                binding.multiType.isSelected = false
+                                binding.rowControlLayout.isVisible = false
+
+                                binding.imageControlLayout.isVisible = false
+                                binding.changeSplitImage.isVisible = true
+                                binding.splitControlLayout.isVisible = true
+                            }
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.showTypeStateFlow.collectLatest {
+                        when(it) {
+                            MainViewModel.ImageShowType.Simple -> {
+                                binding.sample.isSelected = true
+                                binding.fillArea.isSelected = false
+                                binding.minArea.isSelected = false
+                                binding.fillMinArea.isSelected = false
+                            }
+                            MainViewModel.ImageShowType.FillArea -> {
+                                binding.sample.isSelected = false
+                                binding.fillArea.isSelected = true
+                                binding.minArea.isSelected = false
+                                binding.fillMinArea.isSelected = false
+                            }
+                            MainViewModel.ImageShowType.MinArea -> {
+                                binding.sample.isSelected = false
+                                binding.fillArea.isSelected = false
+                                binding.minArea.isSelected = true
+                                binding.fillMinArea.isSelected = false
+                            }
+                            MainViewModel.ImageShowType.FillMinArea -> {
+                                binding.sample.isSelected = false
+                                binding.fillArea.isSelected = false
+                                binding.minArea.isSelected = false
+                                binding.fillMinArea.isSelected = true
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
-    private fun createImageList(
-        showType: ImageDataShowType
-    ): List<ImageData> {
-        val list: MutableList<ImageData> = ArrayList()
-        repeat(16) {
-            val data = createData(
-                imageCount = it + 1,
-                showType = showType
-            )
-            list.add(data)
-        }
-        list.add(
-            createData(
-                imageCount = 20,
-                showType = showType
-            )
-        )
-        return list
-    }
+    fun <T : ImageSizeConfig> getProvider(
+        type: MainViewModel.ImageShowType,
+        sizeConfig: T
+    ): SizeProvider<T> {
+        return when (type) {
+            MainViewModel.ImageShowType.Simple -> {
+                SizeProvider(config = sizeConfig)
+            }
 
-    private fun createData(
-        imageCount: Int,
-        showType: ImageDataShowType
-    ): ImageData {
-        val imageList: MutableList<String> = ArrayList()
-        repeat(imageCount) {
-            imageList.add(defaultList[it % defaultList.size])
-        }
+            MainViewModel.ImageShowType.FillArea -> {
+                FillAreaSizeProvider(config = sizeConfig)
+            }
 
-        return ImageData(
-            imageUrlList = imageList,
-            showType = showType
-        )
+            MainViewModel.ImageShowType.MinArea -> {
+                MinAreaSizeProvider(config = sizeConfig)
+            }
+
+            MainViewModel.ImageShowType.FillMinArea -> {
+                FillMinAreaSizeProvider(config = sizeConfig)
+            }
+        }
     }
 }

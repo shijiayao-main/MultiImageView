@@ -4,10 +4,11 @@ import android.graphics.Rect
 import com.jiaoay.multiimageview.cacheSqrt
 import com.jiaoay.multiimageview.isPerfectSquare
 import com.jiaoay.multiimageview.sqrt
-import com.jiaoay.multiimageview.widget.ImageFactoryConfig
+import com.jiaoay.multiimageview.widget.data.ImageFactoryConfig
+import com.jiaoay.multiimageview.widget.data.ImageSizeConfig
 import kotlin.math.ceil
 
-class FillMinAreaSizeProvider<T : ImageFactoryConfig>(
+class FillMinAreaSizeProvider<T : ImageSizeConfig>(
     config: T
 ) : SizeProvider<T>(
     config = config

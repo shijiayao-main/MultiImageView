@@ -3,10 +3,10 @@ package com.jiaoay.multiimageview.widget.factory.provider
 import com.jiaoay.multiimageview.cacheSqrt
 import com.jiaoay.multiimageview.isPerfectSquare
 import com.jiaoay.multiimageview.sqrt
-import com.jiaoay.multiimageview.widget.ImageFactoryConfig
+import com.jiaoay.multiimageview.widget.data.ImageSizeConfig
 import kotlin.math.ceil
 
-open class MinAreaSizeProvider<T : ImageFactoryConfig>(
+open class MinAreaSizeProvider<T : ImageSizeConfig>(
     config: T
 ) : SizeProvider<T>(
     config = config

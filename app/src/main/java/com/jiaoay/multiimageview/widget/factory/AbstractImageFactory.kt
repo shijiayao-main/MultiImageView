@@ -1,4 +1,4 @@
-package com.jiaoay.multiimageview.widget
+package com.jiaoay.multiimageview.widget.factory
 
 import android.content.Context
 import android.graphics.Canvas
@@ -10,6 +10,10 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import com.jiaoay.multiimageview.loadImageUri
 import com.jiaoay.multiimageview.scope
+import com.jiaoay.multiimageview.widget.MultiImageViewController
+import com.jiaoay.multiimageview.widget.data.ImageFactoryConfig
+import com.jiaoay.multiimageview.widget.data.ImageInfo
+import com.jiaoay.multiimageview.widget.data.ImageSizeConfig
 import com.jiaoay.multiimageview.widget.factory.provider.SizeProvider
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,12 +21,14 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
-abstract class AbstractImageFactory<T : ImageFactoryConfig>(
-    val config: T,
+abstract class AbstractImageFactory<T : ImageSizeConfig>(
+    val config: ImageFactoryConfig,
     protected val sizeProvider: SizeProvider<T>
 ) {
 
     protected val TAG = "AbstractImageFactory"
+
+    protected val sizeConfig: T = sizeProvider.config
 
     var controller: MultiImageViewController? = null
 

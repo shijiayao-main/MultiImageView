@@ -6,77 +6,208 @@
   android:orientation="vertical"
   tools:context=".demo.MainActivity">
 
-  <HorizontalScrollView
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="选择类型" />
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <Button
+      android:id="@+id/multiType"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:text="多图样式" />
+
+    <Button
+      android:id="@+id/splitType"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:text="裁切填充样式" />
+
+  </LinearLayout>
+
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="布局相关" />
+
+  <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
-      android:layout_width="wrap_content"
+    <Button
+      android:id="@+id/sample"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:orientation="horizontal">
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:maxLines="1"
+      android:text="Sample" />
 
-      <Button
-        android:id="@+id/sampleType1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="4dp"
-        android:text="样式1" />
+    <Button
+      android:id="@+id/fillArea"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:maxLines="1"
+      android:text="FillArea" />
 
-      <Button
-        android:id="@+id/sampleType2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="4dp"
-        android:text="样式2" />
+  </LinearLayout>
 
-      <Button
-        android:id="@+id/sampleType3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="4dp"
-        android:text="样式3" />
-
-      <Button
-        android:id="@+id/sampleType4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="4dp"
-        android:text="样式4" />
-
-      <Button
-        android:id="@+id/sampleType5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="4dp"
-        android:text="样式5" />
-
-      <Button
-        android:id="@+id/sampleType6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="4dp"
-        android:text="样式6" />
-
-      <Button
-        android:id="@+id/sampleType7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="4dp"
-        android:text="样式7" />
-
-      <Button
-        android:id="@+id/sampleType8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="4dp"
-        android:text="样式8" />
-    </LinearLayout>
-
-  </HorizontalScrollView>
-
-  <androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/recyclerView"
+  <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="wrap_content">
+
+    <Button
+      android:id="@+id/minArea"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:maxLines="1"
+      android:text="MinArea" />
+
+    <Button
+      android:id="@+id/fillMinArea"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:maxLines="1"
+      android:text="FillMinArea" />
+  </LinearLayout>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <Button
+      android:id="@+id/addColumn"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:text="增加列数" />
+
+    <Button
+      android:id="@+id/reduceColumn"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:text="减少列数" />
+  </LinearLayout>
+
+  <LinearLayout
+    android:id="@+id/rowControlLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <Button
+      android:id="@+id/addRow"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:text="增加行数" />
+
+    <Button
+      android:id="@+id/reduceRow"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:text="减少行数" />
+
+  </LinearLayout>
+
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="图片/裁切 数量" />
+
+  <LinearLayout
+    android:id="@+id/imageControlLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <Button
+      android:id="@+id/addImage"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:text="增加图片数量" />
+
+    <Button
+      android:id="@+id/reduceImage"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:text="减少图片数量" />
+
+  </LinearLayout>
+
+  <Button
+    android:id="@+id/changeSplitImage"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="6dp"
+    android:text="换张图" />
+
+  <LinearLayout
+    android:id="@+id/splitControlLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <Button
+      android:id="@+id/addSplit"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:text="增加裁切数量" />
+
+    <Button
+      android:id="@+id/reduceSplit"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="6dp"
+      android:layout_weight="1"
+      android:text="减少裁切数量" />
+
+  </LinearLayout>
+
+  <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="8dp"
+    android:background="#fde8d0">
+
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+      <com.jiaoay.multiimageview.widget.MultiImageView
+        android:id="@+id/multiImageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#bce2e8" />
+    </FrameLayout>
+  </ScrollView>
 
 </LinearLayout>

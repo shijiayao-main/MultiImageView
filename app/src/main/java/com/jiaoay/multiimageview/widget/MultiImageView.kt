@@ -5,6 +5,8 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
+import com.jiaoay.multiimageview.widget.data.ImageInfo
+import com.jiaoay.multiimageview.widget.factory.AbstractImageFactory
 
 class MultiImageView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0

@@ -53,6 +53,7 @@ dependencies {
     implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core")
     implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android")
     implementation(group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version = "2.7.0")
+    implementation(group = "androidx.fragment", name = "fragment-ktx", version = "1.6.2")
 
     implementation(group = "com.github.bumptech.glide", name = "glide", version = "4.16.0")
 }

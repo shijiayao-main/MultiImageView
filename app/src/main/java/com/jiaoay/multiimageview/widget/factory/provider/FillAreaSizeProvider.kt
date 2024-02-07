@@ -1,9 +1,11 @@
 package com.jiaoay.multiimageview.widget.factory.provider
 
 import android.graphics.Rect
-import com.jiaoay.multiimageview.widget.ImageFactoryConfig
+import com.jiaoay.multiimageview.widget.data.ImageFactoryConfig
+import com.jiaoay.multiimageview.widget.data.ImageSizeConfig
+import com.jiaoay.multiimageview.widget.data.SplitImageSizeConfig
 
-class FillAreaSizeProvider<T : ImageFactoryConfig>(
+class FillAreaSizeProvider<T : ImageSizeConfig>(
     config: T
 ) : SizeProvider<T>(
     config = config

@@ -1,4 +1,4 @@
-package com.jiaoay.multiimageview.widget
+package com.jiaoay.multiimageview.widget.data
 
 import android.graphics.Rect
 import android.graphics.RectF

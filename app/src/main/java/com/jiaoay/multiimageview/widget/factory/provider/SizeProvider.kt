@@ -1,10 +1,11 @@
 package com.jiaoay.multiimageview.widget.factory.provider
 
 import android.graphics.Rect
-import com.jiaoay.multiimageview.widget.ImageFactoryConfig
+import com.jiaoay.multiimageview.widget.data.ImageFactoryConfig
+import com.jiaoay.multiimageview.widget.data.ImageSizeConfig
 import kotlin.math.ceil
 
-open class SizeProvider<T : ImageFactoryConfig>(
+open class SizeProvider<T : ImageSizeConfig>(
     val config: T
 ) {
 

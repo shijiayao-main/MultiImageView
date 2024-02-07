@@ -1,4 +1,4 @@
-package com.jiaoay.multiimageview.widget.factory.image.split
+package com.jiaoay.multiimageview.widget.factory
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,19 +6,19 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.util.Log
-import com.jiaoay.multiimageview.widget.AbstractImageFactory
-import com.jiaoay.multiimageview.widget.ImageInfo
-import com.jiaoay.multiimageview.widget.SplitImageFactoryConfig
+import com.jiaoay.multiimageview.widget.data.ImageFactoryConfig
+import com.jiaoay.multiimageview.widget.data.ImageInfo
+import com.jiaoay.multiimageview.widget.data.SplitImageSizeConfig
 import com.jiaoay.multiimageview.widget.factory.provider.SizeProvider
 import kotlin.math.abs
 
 /**
  * 将单图裁切成多份去展示
  */
-abstract class AbstractSplitImageFactory(
-    config: SplitImageFactoryConfig,
-    sizeProvider: SizeProvider<SplitImageFactoryConfig>
-) : AbstractImageFactory<SplitImageFactoryConfig>(
+class SplitImageFactory(
+    config: ImageFactoryConfig,
+    sizeProvider: SizeProvider<SplitImageSizeConfig>
+) : AbstractImageFactory<SplitImageSizeConfig>(
     config = config,
     sizeProvider = sizeProvider
 ) {
@@ -30,7 +30,8 @@ abstract class AbstractSplitImageFactory(
             it.isNotBlank()
         }
 
-        val maxSize = config.splitCount.coerceAtMost(config.maxColumnCount * config.maxColumnCount)
+        val maxSize =
+            sizeConfig.splitCount.coerceAtMost(sizeConfig.maxColumnCount * sizeConfig.maxColumnCount)
 
         val imageInfoList: MutableList<ImageInfo> = ArrayList()
         for (index in 0 until maxSize) {
@@ -73,37 +74,12 @@ abstract class AbstractSplitImageFactory(
         val columnCount = sizeProvider.getColumnCount(imageListSize = imageListSize)
 
         val areaWidth: Float =
-            rectWidth * columnCount + (config.spaceWidth * (columnCount - 1)).coerceAtLeast(0f) + paddingHorizontalSize
+            rectWidth * columnCount + (sizeConfig.spaceWidth * (columnCount - 1)).coerceAtLeast(0f) + paddingHorizontalSize
         val areaHeight: Float =
-            rectWidth * rowCount + (config.spaceWidth * (rowCount - 1)).coerceAtLeast(0f) + paddingVerticalSize
+            rectWidth * rowCount + (sizeConfig.spaceWidth * (rowCount - 1)).coerceAtLeast(0f) + paddingVerticalSize
 
         return areaWidth to areaHeight
     }
-//
-//    open fun getColumnCount(imageListSize: Int): Int {
-//        return if (imageListSize >= config.maxColumnCount) {
-//            config.maxColumnCount
-//        } else {
-//            imageListSize % config.maxColumnCount
-//        }
-//    }
-//
-//    open fun getRowCount(imageListSize: Int): Int {
-//        return ceil(imageListSize / config.maxColumnCount.toDouble()).toInt()
-//    }
-//
-//    open fun calculateRectWidth(
-//        width: Int,
-//        height: Int,
-//        imageListSize: Int,
-//    ): Float {
-//        val paddingLeft = getPaddingRect().left
-//        val paddingRight = getPaddingRect().right
-//
-//        val spaceColumnSumWidth: Float = config.spaceWidth * (config.maxColumnCount - 1)
-//        val paddingHorizontalSize = paddingLeft + paddingRight
-//        return (width - spaceColumnSumWidth - paddingHorizontalSize) / config.maxColumnCount
-//    }
 
     override fun measureImageRectF(
         imageInfoList: List<ImageInfo>,
@@ -139,8 +115,9 @@ abstract class AbstractSplitImageFactory(
             imageListSize = imageListSize
         )
 
-        val left: Float = rectWidth * columnIndex + config.spaceWidth * columnIndex + paddingLeft
-        val top: Float = rectWidth * rowIndex + config.spaceWidth * rowIndex + paddingTop
+        val left: Float =
+            rectWidth * columnIndex + sizeConfig.spaceWidth * columnIndex + paddingLeft
+        val top: Float = rectWidth * rowIndex + sizeConfig.spaceWidth * rowIndex + paddingTop
         val right: Float = left + rectWidth
         val bottom: Float = top + rectWidth
 
@@ -151,20 +128,6 @@ abstract class AbstractSplitImageFactory(
             bottom
         )
     }
-
-//    open fun getColumnIndex(
-//        index: Int,
-//        imageListSize: Int,
-//    ): Int {
-//        return index % getColumnCount(imageListSize = imageListSize)
-//    }
-//
-//    open fun getRowIndex(
-//        index: Int,
-//        imageListSize: Int,
-//    ): Int {
-//        return index / getColumnCount(imageListSize = imageListSize)
-//    }
 
     override fun loadImageDrawable(
         context: Context,
@@ -225,8 +188,8 @@ abstract class AbstractSplitImageFactory(
         val rowCount = sizeProvider.getRowCount(imageListSize = imageListSize)
         val columnCount = sizeProvider.getColumnCount(imageListSize = imageListSize)
 
-        val spaceSumWidth = config.spaceWidth * (columnCount - 1).coerceAtLeast(0)
-        val spaceSumHeight = config.spaceWidth * (rowCount - 1).coerceAtLeast(0)
+        val spaceSumWidth = sizeConfig.spaceWidth * (columnCount - 1).coerceAtLeast(0)
+        val spaceSumHeight = sizeConfig.spaceWidth * (rowCount - 1).coerceAtLeast(0)
         val areaWidth = getImageAreaWidth(columnCount = columnCount)
         val areaHeight = getImageAreaHeight(rowCount = rowCount)
 
@@ -356,12 +319,12 @@ abstract class AbstractSplitImageFactory(
     private fun getImageAreaWidth(
         columnCount: Int
     ): Float {
-        return columnCount * rectWidth + config.spaceWidth * (columnCount - 1).coerceAtLeast(0)
+        return columnCount * rectWidth + sizeConfig.spaceWidth * (columnCount - 1).coerceAtLeast(0)
     }
 
     private fun getImageAreaHeight(
         rowCount: Int
     ): Float {
-        return rowCount * rectWidth + config.spaceWidth * (rowCount - 1).coerceAtLeast(0)
+        return rowCount * rectWidth + sizeConfig.spaceWidth * (rowCount - 1).coerceAtLeast(0)
     }
 }
