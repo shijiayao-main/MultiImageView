@@ -39,10 +39,6 @@ class MainActivity : AppCompatActivity() {
         roundRadius = roundRadius
     )
 
-    private val adapter by lazy {
-        MainPageAdapter()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
